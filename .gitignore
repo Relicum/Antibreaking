@@ -18,7 +18,7 @@ local.properties
 .externalToolBuilders/
 # Locally stored "Eclipse launch configurations"
 *.launch
-./idea
+.idea/
 # CDT-specific
 .cproject
 *.iml
