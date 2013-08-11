@@ -21,7 +21,7 @@ local.properties
 ./idea
 # CDT-specific
 .cproject
-
+*.iml
 # PDT-specific
 .buildpath
 
