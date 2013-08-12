@@ -1,13 +1,13 @@
 package com.relicum.antibreaking;
 
 import com.relicum.antibreaking.listeners.MyBlockBreak;
+import com.relicum.antibreaking.listeners.MyBlockPlace;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,12 +39,11 @@ public class Main extends JavaPlugin implements Listener {
 
         main = this;
         instance = this;
-
-        this.saveDefaultConfig();
         this.getConfig().options().copyDefaults(true);
-        this.saveConfig();
+        this.saveDefaultConfig();
+
         Set<String> s = getConfig().getConfigurationSection("Worlds").getKeys(false);
-        Iterator it = s.iterator();
+
         for (String k : s) {
             Map<String, Object> in = new HashMap<>();
             Object pl = (Object) getConfig().get("Worlds." + k + ".place");
@@ -54,8 +53,8 @@ public class Main extends JavaPlugin implements Listener {
             worldPerms.put(k, in);
         }
 
-        System.out.println(worldPerms.toString());
         pm.registerEvents(new MyBlockBreak(this), this);
+        pm.registerEvents(new MyBlockPlace(this), this);
 
 
     }
@@ -71,6 +70,11 @@ public class Main extends JavaPlugin implements Listener {
         return instance;
     }
 
+    /**
+     * Returns Map
+     *
+     * @return Map<String, Object>
+     */
     public Map<String, Object> getworldP() {
 
         return worldPerms;

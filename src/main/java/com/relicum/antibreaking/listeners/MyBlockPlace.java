@@ -10,17 +10,17 @@ import org.bukkit.event.block.BlockBreakEvent;
 import java.util.Map;
 
 /**
- * Deals with block breaking
+ * Antibreaking
  *
  * @author Relicum
  * @version 0.1
  */
-public class MyBlockBreak implements Listener {
+public class MyBlockPlace implements Listener {
 
     public Main plugin;
     public Map<String, Object> perms;
 
-    public MyBlockBreak(Main pl) {
+    public MyBlockPlace(Main pl) {
 
         plugin = pl;
 
@@ -37,13 +37,13 @@ public class MyBlockBreak implements Listener {
         }
         perms = (Map<String, Object>) plugin.getInstance().getworldP().get(wo);
 
-        boolean res = (boolean) perms.get("break");
+        boolean res = (boolean) perms.get("place");
 
 
-        if (p.isOp() || p.hasPermission("antibreaking.bypass." + wo))
+        if (p.isOp() || p.hasPermission("antibreaking.place.bypass." + wo))
             return;
         if (!res) {
-            p.sendMessage(ChatColor.DARK_RED + "You do not have permission to break blocks in world " + wo);
+            p.sendMessage(ChatColor.DARK_RED + "You do not have permission to place blocks in world " + wo);
             e.setCancelled(true);
         }
 
