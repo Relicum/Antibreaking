@@ -1,12 +1,15 @@
 package com.relicum.antibreaking;
 
+import com.relicum.antibreaking.listeners.MyBlockBreak;
 import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Antibreaking
@@ -30,38 +33,46 @@ public class Main extends JavaPlugin implements Listener {
      * Shortcut to PluginManager
      */
     private PluginManager pm = Bukkit.getServer().getPluginManager();
+    private Map<String, Object> worldPerms = new HashMap<>();
 
-    public void onLoad() {
+    public void onEnable() {
 
         main = this;
-        set(this);
+        instance = this;
+
         this.saveDefaultConfig();
         this.getConfig().options().copyDefaults(true);
         this.saveConfig();
-
-        pm.registerEvents(this, this);
-    }
-
-    private void set(Main ma) {
-
-        if (instance == null) {
-            instance = ma;
+        Set<String> s = getConfig().getConfigurationSection("Worlds").getKeys(false);
+        Iterator it = s.iterator();
+        for (String k : s) {
+            Map<String, Object> in = new HashMap<>();
+            Object pl = (Object) getConfig().get("Worlds." + k + ".place");
+            Object br = (Object) getConfig().get("Worlds." + k + ".break");
+            in.put("place", pl);
+            in.put("break", br);
+            worldPerms.put(k, in);
         }
+
+        System.out.println(worldPerms.toString());
+        pm.registerEvents(new MyBlockBreak(this), this);
+
+
     }
+
 
     public void onDisable() {
 
 
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void placeEvent(BlockBreakEvent e) {
+    public Main getInstance() {
 
+        return instance;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void BreakEvent(BlockBreakEvent e) {
+    public Map<String, Object> getworldP() {
 
-
+        return worldPerms;
     }
 }

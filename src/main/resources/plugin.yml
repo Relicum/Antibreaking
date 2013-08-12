@@ -1,4 +1,4 @@
-name: Antibreaking
+﻿name: Antibreaking
 main: com.relicum.antibreaking.Main
 author: Relicum
 Description: Simple model which allows you to deny block breaks and placing with full MuiltWorld Support
@@ -29,45 +29,6 @@ commands:
     aliases: abv
     permission: antibreak.viewperm
     permission-message: You do not have permmission to run that command
-
-
-
 permissions:
-    antibreak.*:
-          description: Gives user fully perms and bypasses
-          children:
-              antibreak.place.bypass: true
-              antibreak.break.bypass: true
-              antibreak.setbreak: true
-              antibreak.setplace: true
-              antibreak.viewperm: true
-              antibreak.reload: true
-      antibreak.place.bypass:
-          description: Allows the user to bypass the Block Place setting in all worlds
-          default: true;
-      antibreak.place.bypass:
-          description: Allows the user to bypass the Block Break setting in all worlds
-          default: true
-      antibreak.setbreak:
-          description: Allows the user to set the Block break option. Must have true|false passed World is optional
-          default: op
-      antibreak.setplace:
-          description: Allows the user to set the Block place option. Must have true|false passed World is optional
-          default: op
-      antibreak.viewperm:
-          description: Allows the user to see the current worlds options, or if passed the specified world
-          default: op
-      antibreak.reload:
-          description: Allows the user to reload the Antibreak Settings
-          default: op
-    antibreak.world.*:
-        description: Gives the player the default permissions in World world
-        children:
-            antibreak.world.place: true
-            antibreak.world.break: true
-        antibreak.world.place:
-            description: Allows the player to place blocks in the World world
-            default: true
-        antibreak.world.break:
-            description: Allows the player to break blocks in the World world
-            default: true
+    Antibreaking.break.bypass:
+      default: true

@@ -1,1 +1,10 @@
-Worlds: []
+Worlds:
+  world:
+    place: true
+    break: true
+  world_nether:
+    place: true
+    break: true
+  world_the_end:
+    place: true
+    break: true
