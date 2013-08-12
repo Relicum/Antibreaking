@@ -7,8 +7,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -33,7 +33,11 @@ public class Main extends JavaPlugin implements Listener {
      * Shortcut to PluginManager
      */
     private PluginManager pm = Bukkit.getServer().getPluginManager();
-    private Map<String, Object> worldPerms = new HashMap<>();
+
+    /**
+     * Holds the list of world with negative perms
+     */
+    private ArrayList<String> worldPerms = new ArrayList<>();
 
     public void onEnable() {
 
@@ -42,19 +46,14 @@ public class Main extends JavaPlugin implements Listener {
         this.getConfig().options().copyDefaults(true);
         this.saveDefaultConfig();
 
-        Set<String> s = getConfig().getConfigurationSection("Worlds").getKeys(false);
-
-        for (String k : s) {
-            Map<String, Object> in = new HashMap<>();
-            Object pl = (Object) getConfig().get("Worlds." + k + ".place");
-            Object br = (Object) getConfig().get("Worlds." + k + ".break");
-            in.put("place", pl);
-            in.put("break", br);
-            worldPerms.put(k, in);
-        }
+        this.loadPerms();
 
         pm.registerEvents(new MyBlockBreak(this), this);
         pm.registerEvents(new MyBlockPlace(this), this);
+
+        CommandExc ce = new CommandExc(this);
+        getCommand("antireload").setExecutor(ce);
+        getCommand("setplace").setExecutor(ce);
 
 
     }
@@ -73,10 +72,32 @@ public class Main extends JavaPlugin implements Listener {
     /**
      * Returns Map
      *
-     * @return Map<String, Object>
+     * @return ArrayList<String>
      */
-    public Map<String, Object> getworldP() {
+    public ArrayList<String> getworldP() {
 
         return worldPerms;
+    }
+
+    public void loadPerms() {
+        ArrayList<String> per = new ArrayList<>();
+        Set<String> s = getConfig().getConfigurationSection("Worlds").getKeys(true);
+        for (String k : s) {
+            List<?> res = getConfig().getList("Worlds." + k);
+            for (int i = 0; i < res.size(); i++) {
+                System.out.println(res.get(i).toString());
+                if (res.get(i).toString().equals("place")) {
+                    per.add(k.toLowerCase() + "place");
+                } else if (res.get(i).toString().equals("break")) {
+                    per.add(k.toLowerCase() + "break");
+                }
+            }
+
+
+        }
+
+        worldPerms = per;
+        System.out.println(s.toString());
+        System.out.println(per.toString());
     }
 }

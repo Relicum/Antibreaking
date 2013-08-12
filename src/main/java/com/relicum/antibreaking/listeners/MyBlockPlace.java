@@ -5,9 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-
-import java.util.Map;
+import org.bukkit.event.block.BlockPlaceEvent;
 
 /**
  * Antibreaking
@@ -18,7 +16,7 @@ import java.util.Map;
 public class MyBlockPlace implements Listener {
 
     public Main plugin;
-    public Map<String, Object> perms;
+
 
     public MyBlockPlace(Main pl) {
 
@@ -27,24 +25,20 @@ public class MyBlockPlace implements Listener {
     }
 
     @EventHandler(ignoreCancelled = false)
-    public void onBreak(BlockBreakEvent e) {
+    public void onPlace(BlockPlaceEvent e) {
 
         Player p = e.getPlayer();
-        String wo = p.getWorld().getName();
+        String wo = p.getWorld().getName().toLowerCase();
+
         //If no record found break is allowed
-        if (!plugin.getInstance().getworldP().containsKey(wo)) {
+        if (!plugin.getInstance().getworldP().contains(wo + "place")) {
             return;
         }
-        perms = (Map<String, Object>) plugin.getInstance().getworldP().get(wo);
 
-        boolean res = (boolean) perms.get("place");
-
-
-        if (p.isOp() || p.hasPermission("antibreaking.place.bypass." + wo))
-            return;
-        if (!res) {
+        if (!p.isOp() || (!p.hasPermission("antibreaking.place.bypass." + wo))) {
             p.sendMessage(ChatColor.DARK_RED + "You do not have permission to place blocks in world " + wo);
             e.setCancelled(true);
+
         }
 
 

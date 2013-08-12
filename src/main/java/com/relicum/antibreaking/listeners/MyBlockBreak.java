@@ -7,8 +7,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import java.util.Map;
-
 /**
  * Deals with block breaking
  *
@@ -18,7 +16,6 @@ import java.util.Map;
 public class MyBlockBreak implements Listener {
 
     public Main plugin;
-    public Map<String, Object> perms;
 
     public MyBlockBreak(Main pl) {
 
@@ -30,21 +27,16 @@ public class MyBlockBreak implements Listener {
     public void onBreak(BlockBreakEvent e) {
 
         Player p = e.getPlayer();
-        String wo = p.getWorld().getName();
+        String wo = p.getWorld().getName().toLowerCase();
         //If no record found break is allowed
-        if (!plugin.getInstance().getworldP().containsKey(wo)) {
+        if (!plugin.getInstance().getworldP().contains(wo + "break")) {
             return;
         }
-        perms = (Map<String, Object>) plugin.getInstance().getworldP().get(wo);
 
-        boolean res = (boolean) perms.get("break");
-
-
-        if (p.isOp() || p.hasPermission("antibreaking.bypass." + wo))
-            return;
-        if (!res) {
+        if (!p.isOp() || (!p.hasPermission("antibreaking.break.bypass." + wo))) {
             p.sendMessage(ChatColor.DARK_RED + "You do not have permission to break blocks in world " + wo);
             e.setCancelled(true);
+
         }
 
 

@@ -5,9 +5,9 @@ Description: Simple model which allows you to deny block breaks and placing with
 version: 1.1
 
 commands:
-  antibreak:
+  antireload:
     description: Reload the Antibreaking config file
-    useage: "/<command> reload"
+    useage: "/<command>"
     aliases: abr
     permission: antibreak.reload
     permission-message: You do not have permmission to run that command
