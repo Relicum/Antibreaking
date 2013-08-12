@@ -13,7 +13,7 @@ commands:
     permission-message: You do not have permmission to run that command
   setplace:
     description: Allows an admin to set block placing option from in game if world is not give it will defsult to the world the player is in
-    useage: "/<command> true|false [world]"
+    useage: "/<command> on|off [world]"
     aliases: abp
     permission: antibreak.setplace
     permission-message: You do not have permmission to run that command
