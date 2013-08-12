@@ -6,8 +6,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 
-import java.util.Map;
-
 /**
  * Antibreaking
  *
@@ -17,12 +15,12 @@ import java.util.Map;
 public class MyBlockBreak implements Listener {
 
     public Main plugin;
-    public Map<String, Object> perms;
+    public Object perms;
 
     public MyBlockBreak(Main pl) {
 
         plugin = pl;
-        perms = plugin.getInstance().getworldP();
+
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -30,7 +28,7 @@ public class MyBlockBreak implements Listener {
 
         Player p = e.getPlayer();
         String wo = p.getWorld().getName();
-
+        perms = plugin.getInstance().getworldP().get(wo);
         System.out.println("Block Event called");
         if (p.isOp())
             return;
