@@ -1,4 +1,4 @@
 Antibreaking
 ============
 
-Simple Plugin to Stop Breaking and Placing
+Simple Plugin to Stop Breaking and Placing [![Build Status](https://travis-ci.org/Relicum/Antibreaking.png?branch=master)](https://travis-ci.org/Relicum/Antibreaking)
