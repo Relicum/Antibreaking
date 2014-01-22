@@ -1,7 +1,5 @@
 package com.relicum.antibreaking;
 
-import java.util.*;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -9,6 +7,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
+
+import java.util.*;
 
 /**
  * Antibreaking
@@ -19,10 +19,10 @@ import org.bukkit.util.StringUtil;
 public class CommandExc implements TabExecutor {
 
     public Main plugin;
-    public Map<String, Object> messages = new HashMap<>(plugin.getConfig().getConfigurationSection("messages").getKeys(false).size());
+    public Map<String, Object> messages = new HashMap<>();
     private String noCmdPerm;
     private String noBreaking;
-    private String noPlaceing;
+    private String noPlacing;
     private String noConsole;
     private String reload;
     private String invalidArgs;
@@ -34,14 +34,16 @@ public class CommandExc implements TabExecutor {
         plugin = pl;
 
         messages = plugin.getConfig().getConfigurationSection("messages").getValues(true);
-        noCmdPerm = ChatColor.translateAlternateColorCodes('&', messages.get("noCommandPermission").toString().replace("%command%", "antireload"));
+        noCmdPerm = ChatColor.translateAlternateColorCodes('&', messages.get("noCommandPermission").toString());
         noBreaking = ChatColor.translateAlternateColorCodes('&', messages.get("noBreaking").toString());
-        noPlaceing = ChatColor.translateAlternateColorCodes('&', messages.get("noPlacing").toString());
+        noPlacing = ChatColor.translateAlternateColorCodes('&', messages.get("noPlacing").toString());
         noConsole = ChatColor.translateAlternateColorCodes('&', messages.get("noConsole").toString());
         reload = ChatColor.translateAlternateColorCodes('&', messages.get("reload").toString());
         invalidArgs = ChatColor.translateAlternateColorCodes('&', messages.get("invalidArgs").toString());
         breakCmd = ChatColor.translateAlternateColorCodes('&', messages.get("breakCmd").toString());
         placeCmd = ChatColor.translateAlternateColorCodes('&', messages.get("placeCmd").toString());
+        messages.clear();
+        messages=null;
 
     }
 
@@ -74,12 +76,12 @@ public class CommandExc implements TabExecutor {
                 if (args.length > 1) {
 
                     plugin.getConfig().set("worlds." + args[2] + ".place", args[1]);
-                    player.sendMessage(placeCmd.replace("%world%", args[2]).replace("%args%", args[1]));
+                    player.sendMessage(placeCmd.replace("%W%", args[2]).replace("%A%", args[1]));
                     return true;
                 } else {
 
                     plugin.getConfig().set("worlds." + player.getWorld().getName() + ".place", args[1]);
-                    player.sendMessage(placeCmd.replace("%world%", player.getWorld().getName()).replace("%args%", args[1]));
+                    player.sendMessage(placeCmd.replace("%W%", player.getWorld().getName()).replace("%A%", args[1]));
                     return true;
                 }
 
@@ -142,7 +144,7 @@ public class CommandExc implements TabExecutor {
         System.out.println(alias + " length is " + args.length);
         List<String> ops = Arrays.asList("on", "off");
         if (sender instanceof Player) {
-            if (args.length == 2 && (command.getName().equalsIgnoreCase("antiplace") || command.getName().equalsIgnoreCase("antibreak"))) {
+            if (args.length == 0) {
                 System.out.println("trying to tab");
                 return StringUtil.copyPartialMatches(args[1], ops, new ArrayList<String>(ops.size()));
             }

@@ -1,13 +1,16 @@
 package com.relicum.antibreaking;
 
-import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.plugin.PluginManager;
+import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Antibreaking
@@ -17,23 +20,47 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class Main extends JavaPlugin implements Listener {
 
-    /**
-     * Shortcut to PluginManager
-     */
-    private PluginManager pm = Bukkit.getServer().getPluginManager();
+    public List<String> breaking=new ArrayList<>();
+    public List<String> placing= new ArrayList<>();
 
-    public void onLoad() {
-
+    @Override
+    public void onEnable() {
+        this.getServer().getPluginManager().registerEvents(this,this);
+        getConfig().options().copyDefaults(true);
         this.saveDefaultConfig();
-        this.getConfig().options().copyDefaults(true);
-        this.saveConfig();
+
+
+
+        Map<String, Object> b =  getConfig().getConfigurationSection("break").getValues(true);
+        Map<String, Object> p =  getConfig().getConfigurationSection("place").getValues(true);
+
+        for(Map.Entry<String,Object> e: b.entrySet()){
+            if(e.getValue()==true){
+                breaking.add(e.getKey());
+            }
+        }
+
+        System.out.println("breaking allowed in num " + breaking.size());
+
+        for(Map.Entry<String,Object> e: p.entrySet()){
+            if(e.getValue()==true){
+                placing.add(e.getKey());
+            }
+        }
+
+        System.out.println("placing num is " + placing.size());
+
+        getConfig().set("firstRun",false);
+        saveConfig();
+
+
         CommandExc cm = new CommandExc(this);
         getCommand("antireload").setExecutor(cm);
-        getCommand("antibreaking").setExecutor(cm);
-        getCommand("antiplacing").setExecutor(cm);
-        getCommand("antiperms").setExecutor(cm);
+        getCommand("antibreak").setExecutor(cm);
+        getCommand("antiplace").setExecutor(cm);
+        getCommand("antiperm").setExecutor(cm);
 
-        pm.registerEvents(this, this);
+
     }
 
     public void onDisable() {
@@ -49,6 +76,11 @@ public class Main extends JavaPlugin implements Listener {
         }
     }
 
+    public void loadWorldList(){
+        Map<String, Object> con = getConfig().getConfigurationSection("worlds").getValues(true);
+
+    }
+
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void placeEvent(BlockBreakEvent e) {
 
@@ -57,5 +89,19 @@ public class Main extends JavaPlugin implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void BreakEvent(BlockBreakEvent e) {
 
+    }
+
+    @EventHandler
+    public void worldLoad(WorldLoadEvent e){
+        String world = e.getWorld().getName();
+        if(!getConfig().contains("break." + world )){
+            getConfig().set("break." + world,true);
+            getConfig().set("place." + world,true);
+            breaking.add(world);
+            placing.add(world);
+            getLogger().info("The new world " + world + " has successfully been imported by Antibreaking");
+            saveDefaultConfig();
+
+        }
     }
 }

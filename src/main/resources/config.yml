@@ -1,20 +1,23 @@
-Worlds:
-  world:
-    - place
-    - break
-  world_nether:
-    - place
-    - break
-  world_the_end:
-    - place
-    - break
+#If you manually add a world you must enter it under break and place
+break:
+    world: true
+    world_nether: true
+    world_the_end: true
+place:
+    world: true
+    world_nether: true
+    world_the_end: true
+firstRun: true
+
+#This section contain the messages
+
 messages:
-    noCommandPermission: "&4You do not have permission to perform the command &6%command%"
+    noCommandPermission: "&4You do not have permission to perform the command &6%CMD%"
     noConsole: "&4You can only run this command in game"
-    noBreaking: "&4You do not have permission to break blocks in world &6%world%"
-    noPlaceing: "&4You do not have permission to place blocks in the world &6%world%"
+    noBreaking: "&4You do not have permission to break blocks in world &6%W%"
+    noPlacing: "&4You do not have permission to place blocks in the world &6%W%"
     reload: "&aYou have successfully reloaded antibreaking"
     invalidArgs: "&4You must pass either &6on&4 or &6off&4 world name is optional"
-    breakCmd: "&aTou have successfully set &6%world%&a block breaking to &6%arg%"
-    placeCmd: "&aTou have successfully set &6%world%&a block placing to &6%arg%"
+    breakCmd: "&aTou have successfully set &6%W%&a block breaking to &6%A%"
+    placeCmd: "&aTou have successfully set &6%W%&a block placing to &6%A%"
 
