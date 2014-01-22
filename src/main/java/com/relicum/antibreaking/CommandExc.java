@@ -1,145 +1,152 @@
 package com.relicum.antibreaking;
 
+import java.util.*;
+
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabExecutor;
 import org.bukkit.entity.Player;
-
-import java.util.Arrays;
-import java.util.List;
+import org.bukkit.util.StringUtil;
 
 /**
  * Antibreaking
- *
+ * 
  * @author Relicum
  * @version 0.1
  */
-public class CommandExc implements CommandExecutor {
+public class CommandExc implements TabExecutor {
 
     public Main plugin;
+    public Map<String, Object> messages = new HashMap<>(plugin.getConfig().getConfigurationSection("messages").getKeys(false).size());
+    private String noCmdPerm;
+    private String noBreaking;
+    private String noPlaceing;
+    private String noConsole;
+    private String reload;
+    private String invalidArgs;
+    private String breakCmd;
+    private String placeCmd;
 
     public CommandExc(Main pl) {
 
         plugin = pl;
+
+        messages = plugin.getConfig().getConfigurationSection("messages").getValues(true);
+        noCmdPerm = ChatColor.translateAlternateColorCodes('&', messages.get("noCommandPermission").toString().replace("%command%", "antireload"));
+        noBreaking = ChatColor.translateAlternateColorCodes('&', messages.get("noBreaking").toString());
+        noPlaceing = ChatColor.translateAlternateColorCodes('&', messages.get("noPlacing").toString());
+        noConsole = ChatColor.translateAlternateColorCodes('&', messages.get("noConsole").toString());
+        reload = ChatColor.translateAlternateColorCodes('&', messages.get("reload").toString());
+        invalidArgs = ChatColor.translateAlternateColorCodes('&', messages.get("invalidArgs").toString());
+        breakCmd = ChatColor.translateAlternateColorCodes('&', messages.get("breakCmd").toString());
+        placeCmd = ChatColor.translateAlternateColorCodes('&', messages.get("placeCmd").toString());
+
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(this.noConsole);
+            return false;
+        }
+        Player player = (Player) sender;
+        String wo = player.getWorld().getName();
+        String setTo;
+        if (player.hasPermission("antibreak.reload") || player.isOp()) {
 
-        if (label.equalsIgnoreCase("antireload")) {
             plugin.reloadConfig();
-            plugin.loadPerms();
+            player.sendMessage(reload);
+            plugin.getLogger().info(reload);
+            return true;
+        }
 
-            if (sender instanceof Player) {
-                sender.sendMessage(ChatColor.GREEN + "The configs have been reloaded");
-            } else {
-                plugin.getLogger().info("The configs have been reloaded");
+        if (label.equalsIgnoreCase("antiplace") || label.equalsIgnoreCase("antibreak")) {
+
+            System.out.println("Get Here total args is " + args.length + Arrays.toString(args));
+            if (args.length < 1 || args[1] == null) {
+
+                player.sendMessage(invalidArgs);
+                return false;
             }
-
-
-        } else if (label.equalsIgnoreCase("setplace")) {
-            if (sender instanceof Player) {
-                Player player = (Player) sender;
-                String wo;
-                String setTo;
-                System.out.println("Get Here total args is " + args.length + Arrays.toString(args));
-                if (args.length == 0) {
-                    player.sendMessage(ChatColor.DARK_RED + "You arguments length can not be 0. Must pass on or off, world is optional");
-                    return true;
-                }
-
-                setTo = args[0];
-                System.out.println(setTo);
-
-                if (!((!setTo.equals("On")) && (!setTo.equals("Off")))) {
-                    player.sendMessage(ChatColor.DARK_RED + "The first argument must be On or Off currently is " + args[0]);
-                    return true;
-                }
-                System.out.println("make it here");
+            if ((label.equalsIgnoreCase("antiplace"))) {
                 if (args.length > 1) {
-                    String world = args[1];
-                    if (!isValidWorld(world)) {
-                        player.sendMessage(ChatColor.DARK_RED + "You have not passed a valid world, worlds are case sensitive " + world);
-                        return true;
-                    }
-                    wo = world.toLowerCase();
-                } else {
-                    wo = player.getWorld().getName().toLowerCase();
-                    setTo = args[0].toLowerCase();
-                    System.out.println("World not present so using players current");
-                }
 
-                if (setTo.equals("off")) {
-                    if (removeSetting(wo, "place")) {
-                        player.sendMessage(ChatColor.GREEN + "You can now place blocks in " + wo);
-                    } else {
-                        player.sendMessage(ChatColor.GREEN + "Nothing to set you could already place blocks in " + wo);
-                    }
+                    plugin.getConfig().set("worlds." + args[2] + ".place", args[1]);
+                    player.sendMessage(placeCmd.replace("%world%", args[2]).replace("%args%", args[1]));
                     return true;
                 } else {
 
-                    if (addSetting(wo, "place")) {
-                        player.sendMessage(ChatColor.GREEN + "You can no longer place blocks in " + wo);
-                    } else {
-                        player.sendMessage(ChatColor.GREEN + "Nothing to set you could not place blocks in " + wo + " already");
-                    }
+                    plugin.getConfig().set("worlds." + player.getWorld().getName() + ".place", args[1]);
+                    player.sendMessage(placeCmd.replace("%world%", player.getWorld().getName()).replace("%args%", args[1]));
                     return true;
                 }
 
-
-            } else {
-                plugin.getLogger().info("Setplace command can only be run in game");
-                return true;
             }
+
+            System.out.println("make it here");
+            if (args.length > 1) {
+                String world = args[1];
+                if (!isValidWorld(world)) {
+                    player.sendMessage(ChatColor.DARK_RED + "You have not passed a valid world, worlds are case sensitive " + world);
+                    return true;
+                }
+                wo = world.toLowerCase();
+            } else {
+                wo = player.getWorld().getName().toLowerCase();
+                setTo = args[0].toLowerCase();
+                System.out.println("World not present so using players current");
+            }
+
+            /*
+             * if (setTo.equals("off")) { if (removeSetting(wo, "place")) {
+             * player.sendMessage(ChatColor.GREEN +
+             * "You can now place blocks in " + wo); } else {
+             * player.sendMessage(ChatColor.GREEN +
+             * "Nothing to set you could already place blocks in " + wo); }
+             * return true; } else {
+             * 
+             * if (addSetting(wo, "place")) { player.sendMessage(ChatColor.GREEN
+             * + "You can no longer place blocks in " + wo); } else {
+             * player.sendMessage(ChatColor.GREEN +
+             * "Nothing to set you could not place blocks in " + wo +
+             * " already"); } return true; }
+             */
 
         }
         System.out.println("Get to the bottom");
         return false;
     }
 
-    /**
-     * Checks if a given string is a valid world
-     *
-     * @param wo String
-     * @return boolean
-     */
     private boolean isValidWorld(String wo) {
 
-        if (plugin.getServer().getWorld(wo) == null) {
-            return false;
-        }
-        return true;
+        return Bukkit.getWorld(wo) != null;
     }
 
-    private boolean removeSetting(String world, String type) {
+    private void setBreak(String ty, String world) {
 
-        if (plugin.getInstance().getworldP().contains(world + type)) {
-            List<String> li = plugin.getConfig().getStringList("Worlds." + world);
-            li.remove(type);
-            plugin.getConfig().set("Worlds." + world, li);
-            plugin.saveConfig();
-            plugin.reloadConfig();
-            plugin.loadPerms();
-            return true;
+        if (plugin.getConfig().contains("worlds." + world)) {
+            if (ty.equalsIgnoreCase("on")) {
+                plugin.getConfig().set("world." + world, true);
+
+            } else {
+
+                plugin.getConfig().set("worlds." + world, false);
+            }
         }
-
-        return false;
-
     }
 
-    private boolean addSetting(String world, String type) {
-
-        if (!plugin.getInstance().getworldP().contains(world + type)) {
-            List<String> li = plugin.getConfig().getStringList("Worlds." + world);
-            li.add(type);
-            plugin.getConfig().set("Worlds." + world, li);
-            plugin.saveConfig();
-            plugin.reloadConfig();
-            plugin.loadPerms();
-            return true;
+    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
+        System.out.println(Arrays.toString(args));
+        System.out.println(alias + " length is " + args.length);
+        List<String> ops = Arrays.asList("on", "off");
+        if (sender instanceof Player) {
+            if (args.length == 2 && (command.getName().equalsIgnoreCase("antiplace") || command.getName().equalsIgnoreCase("antibreak"))) {
+                System.out.println("trying to tab");
+                return StringUtil.copyPartialMatches(args[1], ops, new ArrayList<String>(ops.size()));
+            }
         }
-
-        return false;
+        return Arrays.asList("help");
     }
 }

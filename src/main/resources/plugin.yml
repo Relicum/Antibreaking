@@ -11,19 +11,19 @@ commands:
     aliases: abr
     permission: antibreak.reload
     permission-message: You do not have permmission to run that command
-  setplace:
+  antiplace:
     description: Allows an admin to set block placing option from in game if world is not give it will defsult to the world the player is in
     useage: "/<command> on|off [world]"
     aliases: abp
     permission: antibreak.setplace
     permission-message: You do not have permmission to run that command
-  setbreak:
+  antibreak:
     description: Allows an admin to set block breaking option from in game if world is not give it will defsult to the world the player is in
-    useage: "/<command> true|false [world]"
+    useage: "/<command> on|off [world]"
     aliases: abb
     permission: antibreak.setbreak
     permission-message: You do not have permmission to run that command
-  viewperm:
+  antiperm:
     description: Allows an admin to view the current place/break settings for the world their in or the world they pass to the command
     useage: "/<command> [world]"
     aliases: abv
