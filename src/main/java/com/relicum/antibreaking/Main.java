@@ -100,7 +100,7 @@ public class Main extends JavaPlugin implements Listener {
             breaking.add(world);
             placing.add(world);
             getLogger().info("The new world " + world + " has successfully been imported by Antibreaking");
-            saveDefaultConfig();
+            saveConfig();
 
         }
     }
