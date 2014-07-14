@@ -12,7 +12,7 @@
     <name>AntiBreaking</name>
 
     <build>
-        <finalName>AntiBreaking.${project.version}</finalName>
+        <finalName>AntiBreaking.${project.version}-b${BUILD_NUMBER}</finalName>
 
         <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
 
